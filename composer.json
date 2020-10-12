@@ -1,0 +1,15 @@
+{
+    "name": "lonesoft/bash-project",
+    "description": "Runs local environment for a project",
+    "version": "0.0.1",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lorenzo Mengon",
+            "email": "lorenzomengon@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {}
+}
