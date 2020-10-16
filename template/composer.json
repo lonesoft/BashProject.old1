@@ -16,5 +16,11 @@
         "post-package-install": [
             "type ./vendor/bin/project-install >/dev/null 2>&1 && ./vendor/bin/project-install; echo \"Bootstrap the project: ./project-bootstrap \" || exit 0"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:lonesoft/BashProject.git"
+        }
+    ]
 }
