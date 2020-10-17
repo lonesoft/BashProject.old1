@@ -13,8 +13,11 @@ function main() {
   if [[ ! -f "$root/project-bootstrap" ]]; then
     cat <<"EOF" >"$root/project-bootstrap"
 #!/usr/bin/env bash
-gnome-terminal -- bash --init-file "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/vendor/bin/project-bootstrap"
+type gnome-terminal >/dev/null 2>&1 \
+  && gnome-terminal -- bash --init-file "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/vendor/bin/project-bootstrap" \
+  || bash --init-file "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/vendor/bin/project-bootstrap"
 EOF
+  chmode u+x "$root/project-bootstrap"
   fi
 
   if [[ ! -f "$root/project-bootstrap.cmd" ]]; then
