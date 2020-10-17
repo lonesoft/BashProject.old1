@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Project script called by the bootstrap process
+PROJECT_TITLE="Bash Project"

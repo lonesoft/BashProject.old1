@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Local script called by the bootstrap process
+# example: project_add_env "<local path>"
