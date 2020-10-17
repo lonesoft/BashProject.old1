@@ -2,61 +2,48 @@
 
 set -e
 
+function add-folder(){
+  local folder=$root/$1
+  if [[ ! -d "$folder" ]]; then
+    mkdir "$folder"
+  fi
+}
+
+function add-file(){
+  local src=$root/vendor/lonesoft/bash-project/templates/install/$1
+  local dst=$root/$1
+  local mod=$2
+  if [[ ! -d "$dst" ]]; then
+    cp $src $dst
+    if [[ "$mod" != "" ]]; then
+      chmod $mod "$dst"
+    fi
+  fi
+}
+
 function main() {
   set -x
   local root=$(pwd)
 
-  if [[ ! -d "$root/bin" ]]; then mkdir "$root/bin"; fi
-  if [[ ! -d "$root/Local" ]]; then mkdir "$root/Local"; fi
-  if [[ ! -d "$root/Local/bin" ]]; then mkdir "$root/Local/bin"; fi
-
-  if [[ ! -f "$root/project-bootstrap" ]]; then
-    cat <<"EOF" >"$root/project-bootstrap"
-#!/usr/bin/env bash
-type gnome-terminal >/dev/null 2>&1 \
-  && gnome-terminal -- bash --init-file "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/vendor/bin/project-bootstrap" \
-  || bash --init-file "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/vendor/bin/project-bootstrap"
-EOF
-  chmod u+x "$root/project-bootstrap"
-  fi
-
-  if [[ ! -f "$root/project-bootstrap.cmd" ]]; then
-    cat <<"EOF" >"$root/project-bootstrap.cmd"
-@ECHO OFF
-FOR /F "tokens=* USEBACKQ" %%F IN (`bash -c "wslpath -u '%~dp0'"`) DO SET bin=%%F
-START "Bash Project" bash --init-file %root%vendor/bin/project-bootstrap
-EXIT
-EOF
-  fi
-
-  if [[ ! -f "$root/bin/project-bootstrap-callback" ]]; then
-    cat <<"EOF" >"$root/bin/project-bootstrap-callback"
-#!/usr/bin/env bash
-# Project script called by the bootstrap process
-PROJECT_TITLE="Bash Project"
-EOF
-  fi
-
-  if [[ ! -f "$root/Local/bin/project-bootstrap-callback" ]]; then
-    cat <<EOF >"$root/Local/bin/project-bootstrap-callback"
-#!/usr/bin/env bash
-# Local script called by the bootstrap process
-# example: project_add_env "<local path>"
-EOF
-  fi
+  add-folder "bin"
+  add-folder "Local"
+  add-folder "Local/bin"
+  add-file "project-bootstrap" "u+x"
+  add-file "project-bootstrap.cmd"
+  add-file "bin/project-bootstrap-callback"
+  add-file "Local/bin/project-bootstrap-callback"
 
   if [[ ! -f "$root/.gitignore" ]]; then
-    cat <<EOF >"$root/.gitignore"
-/vendor/
-/Local/
-EOF
+    echo "/vendor/" > "$root/.gitignore"
+    echo "/Local/" >> "$root/.gitignore"
   fi
-
   set +x
 }
 
 if [[ ! -f "$(pwd)/vendor/project-bootstrap.log" ]]; then
-  main "$@" > "$(pwd)/vendor/project-bootstrap.log" 2>&1
+   main "$@" > "$(pwd)/vendor/project-bootstrap.log" 2>&1
 fi
 
 unset -f main
+unset -f add-file
+unset -f add-folder
