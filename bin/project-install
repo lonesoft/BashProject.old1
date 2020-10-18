@@ -28,14 +28,22 @@ function main() {
   add-folder "bin"
   add-folder "Local"
   add-folder "Local/bin"
+  add-folder ".env"
   add-file "project-bootstrap" "u+x"
   add-file "project-bootstrap.cmd"
   add-file "bin/project-bootstrap-callback"
   add-file "Local/bin/project-bootstrap-callback"
+  add-file ".env/.env"
+  add-file ".env/.env.local"
+  add-file ".env/.env.dev"
+  add-file ".env/.env.dev.local"
+  add-file ".env/.env.prod"
+  add-file ".env/.env.prod.local"
 
   if [[ ! -f "$root/.gitignore" ]]; then
     echo "/vendor/" > "$root/.gitignore"
     echo "/Local/" >> "$root/.gitignore"
+    echo "/.env/*.local" >> "$root/.gitignore"
   fi
   set +x
 }
