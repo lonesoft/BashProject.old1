@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+function _dotenv_load_env() {
+    local file=$1
+    if [ -f "$file" ]; then
+        set -o allexport
+        . "$file"
+        set +o allexport
+    fi
+}
+
+function _dotenv_process(){
+  DOTENV=${DOTENV:-$root/.env}
+  _dotenv_load_env $DOTENV/.env
+  _dotenv_load_env $DOTENV/.env.local
+  if [ -n "$APP_ENV" ]; then
+      _dotenv_load_env $DOTENV/.env.${APP_ENV}
+      _dotenv_load_env $DOTENV/.env.${APP_ENV}.local
+  fi
+}
+
+function _dotenv_vars(){
+  vars_before=$vars_after
+  echo before: "$vars_before"
+  vars_after="$(unset vars_after; unset vars_before; set -o posix; set | grep APP_)"
+  echo after: "$vars_after"
+  if [[ "$vars_after" == "$vars_before" ]]; then echo "EQUALS"; else echo "DIFFERENT"; fi; echo
+}
+
+function _dotenv_loop(){
+  local i
+  local vars_before
+  local vars_after
+  # repeat until all the variable are stabilized
+  # or maximum 20 times if there are some recursion
+  for i in {1..20}; do
+    vars_before=$vars_after
+    vars_after="$(unset vars_after; unset vars_before; unset i; set -o posix; set)"
+    if [[ "$vars_after" == "$vars_before" ]]; then
+      return
+    else
+      _dotenv_process
+    fi
+  done
+}
+
+function dotenv(){
+  local env=$1
+  shift 1
+  local command="$@"
+  case $env in
+    "--help")
+      echo "Usage:"
+      echo " dotenv : set the environment variables"
+      echo " dotenv <env> : sets APP_ENV to <env> and does as above"
+      echo " dotenv <env> <command> : does as above and runs the <command>"
+      echo " dotenv - <command> : does as above without setting APP_ENV"
+      echo " . dotenv --load-only : load the function but do not execute"
+      return
+      ;;
+    "--load-only")
+      return
+      ;;
+  esac
+  local root="$(dirname "$(dirname "$(dirname "${BASH_SOURCE[0]}")")")"
+  if [[ "$env" != "" && "$env" != "-" ]]; then
+    export APP_ENV=$env
+  fi
+
+  _dotenv_loop
+
+  if [[ "$command" != "" ]]; then
+    echo :: $APP_ENV
+    echo :: "$@"
+    "$@"
+  fi
+}
+
+dotenv "$@"
