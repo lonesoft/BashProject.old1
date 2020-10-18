@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "lonesoft/bash-project": "0.0.3"
+        "lonesoft/bash-project": "0.1.*"
     },
     "scripts": {
         "post-package-install": [
