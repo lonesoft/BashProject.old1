@@ -12,11 +12,6 @@
     "require": {
         "lonesoft/bash-project": "0.1.*"
     },
-    "scripts": {
-        "post-package-install": [
-            "type ./vendor/bin/project-install >/dev/null 2>&1 && ./vendor/bin/project-install; echo \"Bootstrap the project: ./project-bootstrap \" || exit 0"
-        ]
-    },
     "repositories": [
         {
             "type": "vcs",
