@@ -2,7 +2,7 @@
 Runs local environment for a project
 
 ## Installation
-`curl -O https://raw.githubusercontent.com/lonesoft/BashProject/v0.0.3/templates/composer.json`
+`curl -O https://raw.githubusercontent.com/lonesoft/BashProject/master/templates/composer.json`
 
 
 `composer install`
